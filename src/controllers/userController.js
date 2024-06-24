@@ -29,5 +29,43 @@ const createUser = async (req, res) => {
   }
 }
 
+const getAllUser = async (req, res) => {
+  try {
+    const { refreshToken } = req.cookies
 
-module.exports = { createUser }
+    const currentUserLogin = await prisma.user.findFirst({
+      where: { refresh_token: refreshToken }
+    })
+
+    if (!currentUserLogin) {
+      return res.status(401).json({ status: 401, message: 'Unauthorized' });
+    }
+
+    const allUser = await prisma.user.findMany({
+      where: {
+        email: {
+          not: currentUserLogin.email
+        }
+      },
+      select: {
+        email: true,
+      },
+    });
+    
+
+    const response = {
+      status: 200,
+      message: 'ok',
+      data: allUser
+    }
+
+    res.json(response)
+
+  } catch (error) {
+    console.log(error, '<-- error get all user');
+    res.status(500).json(serverErrorJson);
+  }
+}
+
+
+module.exports = { createUser, getAllUser }

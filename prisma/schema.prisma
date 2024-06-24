@@ -21,3 +21,14 @@ model User {
 
   @@map("users")
 }
+
+
+model Chat {
+  id              Int       @id @default(autoincrement())
+  id_user_from    Int
+  id_user_to      Int
+  message         String    @db.Text
+  created_at      DateTime  @db.Timestamp()
+  
+  @@map("chats")
+}

@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Node Chat</title>
+  <link rel="icon" href="/images/node-chat-icon.png">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
@@ -15,14 +16,13 @@
       
       <div class="w-full">
         <div class="flex justify-between m-4">
-          <h1 class="text-2xl font-medium">Node Chat</h1>
+          <img src="/images/node-chat-logo.png" alt="logo" class="w-24">
           <div onclick="logoutUser()" class="text-2xl cursor-pointer" title="Log Out">⬅️</div>
         </div>
 
         <!-- contact list -->
-        <div class="w-full">
-
-          <div class="p-3 border-slate-500 border-t border-1 flex flex-row w-full cursor-pointer hover:bg-slate-600 duration-200">
+        <div class="w-full" id="contactListContainer">
+          <!-- <div class="p-3 border-slate-500 border-t border-1 flex flex-row w-full cursor-pointer hover:bg-slate-600 duration-200">
             <div class="rounded-full bg-red-400 h-12 min-w-12 flex justify-center items-center">
               <span class="text-2xl font-semibold">F</span>
             </div>
@@ -33,21 +33,7 @@
               </div>
               <div class="text-sm opacity-75">di mana posisi?</div>
             </div>
-          </div>
-
-          <div class="p-3 border-slate-500 border-t border-1 flex flex-row w-full cursor-pointer hover:bg-slate-600 duration-200">
-            <div class="rounded-full bg-red-400 h-12 min-w-12 flex justify-center items-center">
-              <span class="text-2xl font-semibold">F</span>
-            </div>
-            <div class="w-full ml-3">
-              <div class="flex justify-between">
-                <div>Fandi</div>
-                <div class="text-sm">10:13</div>
-              </div>
-              <div class="text-sm opacity-75">di mana posisi?</div>
-            </div>
-          </div>
-
+          </div> -->
         </div>
       </div>
     </aside>
@@ -133,7 +119,54 @@
     });
   }
 
+  // ======== GET ALL USERS =========
+  const contactListContainer = document.getElementById('contactListContainer')
 
+  const getAllUser = async () => {
+    try {
+      const response = await fetch('/api/user', {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log('Success:', data.data);
+
+      // Bersihkan kontainer sebelum menambah elemen baru
+      contactListContainer.innerHTML = '';
+
+      // Loop melalui data dan buat elemen untuk setiap email
+      data.data.forEach(user => {
+        const email = user.email;
+        const firstNameInitial = email.charAt(0).toUpperCase();
+
+        const emailDiv = /*html*/`
+          <div class="p-3 border-slate-500 border-t border-1 flex flex-row items-center w-full cursor-pointer hover:bg-slate-600 duration-200">
+            <div class="rounded-full bg-red-400 h-12 min-w-12 flex justify-center items-center">
+              <span class="text-2xl font-semibold">${firstNameInitial}</span>
+            </div>
+            <div class="w-full ml-3">
+              <div>${email}</div> 
+            </div>
+          </div>
+        `;
+
+        contactListContainer.insertAdjacentHTML('beforeend', emailDiv);
+      });
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  window.addEventListener('load', () => {
+    getAllUser()
+  })
 </script>
 </body>
 </html>
