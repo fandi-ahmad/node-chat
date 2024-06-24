@@ -57,6 +57,10 @@ const getAllUser = async (req, res) => {
     const response = {
       status: 200,
       message: 'ok',
+      current_user: {
+        id: currentUserLogin.id,
+        email: currentUserLogin.email
+      },
       data: allUser
     }
 
