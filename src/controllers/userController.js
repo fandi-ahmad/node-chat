@@ -48,6 +48,7 @@ const getAllUser = async (req, res) => {
         }
       },
       select: {
+        id: true,
         email: true,
       },
     });
