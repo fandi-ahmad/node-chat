@@ -57,12 +57,12 @@
       <!-- <div id="chatContainer" class="w-full hidden overflow-auto bg-slate-500 px-8 pt-4 text-white"></div> -->
       
       <!-- text input -->
-      <div id="textInputContainer" class="bg-slate-800 hidden h-fit flex flex-row pt-3 pb-2 md:pb-2.5 px-8">
-        <input type="text" id="textInput" placeholder="Type a message" class="w-full p-2 rounded-md">
+      <form id="textInputContainer" class="bg-slate-800 hidden h-fit flex flex-row pt-3 pb-2 md:pb-2.5 px-8">
+        <input type="text" required id="textInput" placeholder="Type a message" class="w-full p-2 rounded-md">
         <button onclick="sendMessage()" id="sendMessage" class="hover:bg-black hover:bg-opacity-20 duration-150 rounded-md px-3 py-0 ml-2 text-white text-2xl">
           ➤
         </button>
-      </div>
+      </form>
 
     </main>
 
@@ -248,7 +248,7 @@
       // Loop melalui data dan buat elemen untuk setiap email
       data.data.forEach(chat => {
         const chatDiv = /*html*/`
-          <div class="w-full flex ${chat.id_user_from === currentUserId ? 'justify-end pl-60' : 'justify-start pr-60'}">
+          <div class="w-full flex ${chat.id_user_from === currentUserId ? 'justify-end pl-10 md:pl-60' : 'justify-start pr-10 md:pr-60'}">
             <div class="${chat.id_user_from === currentUserId ? 'bg-green-700' : 'bg-slate-700'} p-2 mb-3 rounded-md w-fit flex flex-col">
               <span>${chat.message}</span>
               <span class="text-xs opacity-75 ${chat.id_user_from === currentUserId ? 'text-left' : 'text-right'}">${convertTime(chat.created_at)}</span>
