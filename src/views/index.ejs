@@ -101,12 +101,14 @@
   }
 
   const sendMessage = () => {
-    const bubbleChat = createBubbleChat(textInput.value, true)
-    chatContainer.appendChild(bubbleChat)
-    socket.emit('send_message', textInput.value)
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-    sendChatMessage()
-    textInput.value = ''
+    if (textInput.value != '') {
+      const bubbleChat = createBubbleChat(textInput.value, true)
+      chatContainer.appendChild(bubbleChat)
+      socket.emit('send_message', textInput.value)
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      sendChatMessage()
+      textInput.value = ''
+    }
   }
 
   socket.on('new_message', pesan => {
