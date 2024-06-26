@@ -9,25 +9,73 @@ const createUser = async (req, res) => {
     const salt = await genSalt()
     const hashPassword = await hash(password, salt)
 
-    const result = await prisma.user.create({
+    const dataUser = await prisma.user.findFirst({
+      where: { email: email }
+    })
+
+    if (dataUser) {
+      return res.status(400).json({ status: 400, message: 'Email is registered!' })
+    }
+
+    await prisma.user.create({
       data: {
         email: email,
         password: hashPassword
       },
     });
 
-    const response = {
+    res.json({
       status: 201,
       message: 'Register successfully!',
-      data: result
+    })
+  } catch (error) {
+    console.log(error, '<-- error create/register user');
+    res.status(500).json(serverErrorJson);
+  }
+}
+
+const getAllUser = async (req, res) => {
+  try {
+    const { refreshToken } = req.cookies
+
+    const currentUserLogin = await prisma.user.findFirst({
+      where: { refresh_token: refreshToken }
+    })
+
+    if (!currentUserLogin) {
+      return res.status(401).json({ status: 401, message: 'Unauthorized' });
+    }
+
+    const allUser = await prisma.user.findMany({
+      where: {
+        email: {
+          not: currentUserLogin.email
+        }
+      },
+      select: {
+        id: true,
+        email: true,
+      },
+    });
+    
+
+    const response = {
+      status: 200,
+      message: 'ok',
+      current_user: {
+        id: currentUserLogin.id,
+        email: currentUserLogin.email
+      },
+      data: allUser
     }
 
     res.json(response)
+
   } catch (error) {
-    console.log(error, '<-- error');
+    console.log(error, '<-- error get all user');
     res.status(500).json(serverErrorJson);
   }
 }
 
 
-module.exports = { createUser }
+module.exports = { createUser, getAllUser }

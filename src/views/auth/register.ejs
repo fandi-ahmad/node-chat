@@ -4,51 +4,110 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+  <link rel="icon" href="/images/node-chat-icon.webp">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 
-  <div class="container px-5 mt-5">
-    <div >
+  <div class="w-full h-screen flex justify-center items-center" style="background: url('/images/background.webp'); background-size: cover;">
 
-      <label for="email">email</label>
-      <input type="email" id="email" name="email" class="form-control" autocomplete="off"> <br> 
+    <div class="bg-slate-800 text-white rounded-lg px-6 py-8 bg-opacity-50 backdrop-blur-lg backdrop-filter border border-1 border-slate-300">
 
-      <label for="password">password</label>
-      <input type="password" id="password" name="password" class="form-control" autocomplete="off"> <br>
-
-      <button class="btn btn-primary" onclick="registerUser()">Register</button>
-    </div>
-
-    <div class="mt-3">
-      <a href="/login">login</a>
+      <img src="/images/node-chat-logo.webp" alt="logo" class="w-40 mx-auto mb-6">
+      <div>
+  
+        <div class="flex flex-col mb-3">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="your email" class="border border-1 border-gray-500 px-3 py-2 mt-0.5 rounded-md w-72 bg-white bg-opacity-40" autocomplete="off">
+        </div>
+  
+        <div class="flex flex-col mb-3">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="your password" class="border border-1 border-gray-500 px-3 py-2 mt-0.5 rounded-md w-72 bg-white bg-opacity-40" autocomplete="off">
+        </div>
+  
+        <button onclick="registerUser()" id="registerBtn" class="bg-green-500 hover:bg-green-400 duration-150 disabled:bg-green-500 w-full rounded-md py-2 mt-4 flex flex-row justify-center">
+          <div id="loadingProcess" class="hidden">
+            <div class="flex-col gap-4 flex items-center justify-center mr-3 my-auto">
+              <div class="w-5 h-5 border-4 text-4xl animate-spin border-gray-400 flex items-center justify-center border-t-white rounded-full"></div>
+            </div>
+          </div>
+          <span>Register</span>
+        </button>
+      </div>
+  
+      <div class="mt-3 text-sm text-center">
+        <span>Have an account?</span>
+        <a href="/login" class="underline hover:text-blue-300 duration-150">login</a>
+      </div>
     </div>
   </div>
 
+  <div id="alertContainer" class="bg-white absolute left-4 bottom-4 px-3 py-2 rounded-md hidden">
+    <span class="text-xl font-extrabold text-yellow-600">!</span>
+    <span id="alertMessage" class="text-gray-900"></span>
+  </div>
 
 <script>
   let valueEmail = document.getElementById('email')
   let valuePassword = document.getElementById('password')
+  const registerBtn = document.getElementById('registerBtn')
+  const loadingProcess = document.getElementById('loadingProcess')
+  const alertContainer = document.getElementById('alertContainer')
+  const alertMessage = document.getElementById('alertMessage')
+
+  const disabledBtn = () => {
+    loadingProcess.classList.remove('hidden')
+    registerBtn.setAttribute('disabled', '')
+  }
+
+  const removeDisabled = () => {
+    loadingProcess.classList.add('hidden')
+    registerBtn.removeAttribute('disabled')
+  }
+
+  const showAlert = (message) => {
+    alertContainer.classList.remove('hidden')
+    alertMessage.innerText = message
+    setTimeout(() => {
+      alertContainer.classList.add('hidden')
+    }, 5000)
+  }
   
-  const registerUser = () => {
-    let data = {
-      email: valueEmail.value,
-      password: valuePassword.value,
-    }
-    fetch('/api/user/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
-    })
-    .catch((error) => {
+  const registerUser = async () => {
+    try {
+      if (valueEmail.value == '' || valuePassword.value == '') {
+        showAlert('Email or password cannot be empty')
+      } else {
+        if (!valueEmail.value.endsWith('@gmail.com')) {
+          showAlert('Invalid email')
+        } else {
+          disabledBtn()
+
+          let data = {
+            email: valueEmail.value,
+            password: valuePassword.value,
+          };
+
+          let response = await fetch('/api/user/create', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+
+          let result = await response.json();
+          removeDisabled()
+          result.status === 201 ? window.location.href = '/login' : showAlert(result.message)
+        }
+      }
+
+      
+    } catch (error) {
+      throw error
       console.error('Error:', error);
-    });
+    }
   }
 
 </script>
