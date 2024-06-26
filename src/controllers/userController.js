@@ -9,22 +9,27 @@ const createUser = async (req, res) => {
     const salt = await genSalt()
     const hashPassword = await hash(password, salt)
 
-    const result = await prisma.user.create({
+    const dataUser = await prisma.user.findFirst({
+      where: { email: email }
+    })
+
+    if (dataUser) {
+      return res.status(400).json({ status: 400, message: 'Email is registered!' })
+    }
+
+    await prisma.user.create({
       data: {
         email: email,
         password: hashPassword
       },
     });
 
-    const response = {
+    res.json({
       status: 201,
       message: 'Register successfully!',
-      data: result
-    }
-
-    res.json(response)
+    })
   } catch (error) {
-    console.log(error, '<-- error');
+    console.log(error, '<-- error create/register user');
     res.status(500).json(serverErrorJson);
   }
 }

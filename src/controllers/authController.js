@@ -15,7 +15,7 @@ const loginUser = async (req, res) => {
     if (!dataUser) {
       return res.status(400).json({
         status: 400,
-        message: 'Email tidak terdaftar!',
+        message: 'Email not registered!',
       })
     }
 
@@ -23,7 +23,7 @@ const loginUser = async (req, res) => {
     if(!match) {
       return res.status(400).json({
         status: 400,
-        message: 'Password salah!',
+        message: 'Password is wrong!',
       })
     }
 
