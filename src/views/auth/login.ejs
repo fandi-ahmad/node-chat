@@ -23,7 +23,7 @@
           <input type="password" id="password" name="password" placeholder="your password" class="border border-1 border-gray-500 px-3 py-2 mt-0.5 rounded-md w-72 bg-white bg-opacity-40 placeholder:text-gray-300" autocomplete="off">
         </div>
   
-        <button onclick="loginUser()" id="loginBtn" class="bg-green-500 hover:bg-green-400 duration-150 disabled:bg-green-500 w-full rounded-md py-2 mt-4 flex flex-row justify-center">
+        <button onclick="loginUser()" id="actionBtn" class="bg-green-500 hover:bg-green-400 duration-150 disabled:bg-green-500 w-full rounded-md py-2 mt-4 flex flex-row justify-center">
           <div id="loadingProcess" class="hidden">
             <div class="flex-col gap-4 flex items-center justify-center mr-3 my-auto">
               <div class="w-5 h-5 border-4 text-4xl animate-spin border-gray-400 flex items-center justify-center border-t-white rounded-full"></div>
@@ -46,32 +46,8 @@
     <span id="alertMessage" class="text-gray-900"></span>
   </div>
 
+<script src="/js/baseAuthFunction.js"></script>
 <script>
-  let valueEmail = document.getElementById('email')
-  let valuePassword = document.getElementById('password')
-  const loginBtn = document.getElementById('loginBtn')
-  const loadingProcess = document.getElementById('loadingProcess')
-  const alertContainer = document.getElementById('alertContainer')
-  const alertMessage = document.getElementById('alertMessage')
-  
-  const disabledBtn = () => {
-    loadingProcess.classList.remove('hidden')
-    loginBtn.setAttribute('disabled', '')
-  }
-
-  const removeDisabled = () => {
-    loadingProcess.classList.add('hidden')
-    loginBtn.removeAttribute('disabled')
-  }
-
-  const showAlert = (message) => {
-    alertContainer.classList.remove('hidden')
-    alertMessage.innerText = message
-    setTimeout(() => {
-      alertContainer.classList.add('hidden')
-    }, 5000)
-  }
-  
   const loginUser = async () => {
     try {
       if (valueEmail.value == '' || valuePassword.value == '') {
@@ -100,7 +76,6 @@
           result.status === 200 ? window.location.href = '/' : showAlert(result.message)
         }
       }
-      
     } catch (error) {
       throw error
       console.error('Error:', error);
